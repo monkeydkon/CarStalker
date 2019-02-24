@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
     private String encryptedPassword;
+    private String decryptedPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,25 @@ public class MainActivity extends AppCompatActivity {
                     mDatabase.child("users").child(usernameEditText.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            // TODO: 24/2/2019
+                            if(dataSnapshot.exists()){
+
+                                encryptedPassword = dataSnapshot.child("password").getValue().toString();
+                                AESCrypt aesCrypt = new AESCrypt();
+                                try {
+                                    decryptedPassword = aesCrypt.decrypt(encryptedPassword);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(getApplicationContext(),"something went wrong",Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                if(passwordEditText.getText().toString().equals(decryptedPassword)){
+                                    Toast.makeText(getApplicationContext(),"Login successfull",Toast.LENGTH_SHORT).show();
+                                    // TODO: 24/2/2019
+                                }else{
+                                    Toast.makeText(getApplicationContext(),"Wrong password",Toast.LENGTH_SHORT).show();
+                                    passwordEditText.setText("");
+                                }
+                            }
                         }
 
                         @Override
@@ -199,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
                                             encryptedPassword = aesCrypt.encrypt(signupUsernameEditText.getText().toString().toLowerCase());
                                         } catch (Exception e) {
                                             e.printStackTrace();
+                                            Toast.makeText(getApplicationContext(),"something went wrong",Toast.LENGTH_SHORT).show();
+                                            return;
                                         }
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("password").setValue(encryptedPassword);
 
