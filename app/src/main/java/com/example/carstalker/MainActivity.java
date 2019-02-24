@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 if(passwordEditText.getText().toString().equals(decryptedPassword)){
                                     Toast.makeText(getApplicationContext(),"Login successfull",Toast.LENGTH_SHORT).show();
-                                    // TODO: 24/2/2019
+                                    // TODO: 24/2/2019 WHAT TO DO AFTER USED IS LOGGED IN
                                 }else{
                                     Toast.makeText(getApplicationContext(),"Wrong password",Toast.LENGTH_SHORT).show();
                                     passwordEditText.setText("");
