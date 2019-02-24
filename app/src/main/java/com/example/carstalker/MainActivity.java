@@ -30,14 +30,16 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    Location location;
-    private int speed;
+//    Location location;
+//    private int speed;
 
 
     TextView welcomeTextView, welcomeTextView2;
     ImageView arrowImageView;
 
     private DatabaseReference mDatabase;
+
+    private String encryptedPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,21 +105,35 @@ public class MainActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.user_log_in);
         dialog.setTitle("Log In");
         dialog.setCancelable(false);
-        EditText usernameEditText = dialog.findViewById(R.id.usernameEditText);
-        EditText passwordEditText = dialog.findViewById(R.id.passwordEditText);
+        final EditText usernameEditText = dialog.findViewById(R.id.usernameEditText);
+        final EditText passwordEditText = dialog.findViewById(R.id.passwordEditText);
         Button loginButton = dialog.findViewById(R.id.loginButton);
         Button signupButton = dialog.findViewById(R.id.signupButton);
         Button cancelButton = dialog.findViewById(R.id.backButton);
 
+        //login
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"hi",Toast.LENGTH_SHORT).show();
-                // TODO: 24/2/2019
-                        
+                if(usernameEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals("")){
+                    Toast.makeText(getApplicationContext(),"You left at least a field empty, try again",Toast.LENGTH_SHORT).show();
+                }else{
+                    mDatabase.child("users").child(usernameEditText.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // TODO: 24/2/2019
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
         });
-        
+
+        //signup
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,18 +192,28 @@ public class MainActivity extends AppCompatActivity {
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("firstname").setValue(signupFirstnameEditText.getText().toString());
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("lastname").setValue(signupLastnameEditText.getText().toString());
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("email").setValue(signupEmailEditText.getText().toString());
-                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("password").setValue(signupPasswordEditText.getText().toString());
+
+                                        //encrypt password
+                                        AESCrypt aesCrypt = new AESCrypt();
+                                        try {
+                                            encryptedPassword = aesCrypt.encrypt(signupUsernameEditText.getText().toString().toLowerCase());
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("password").setValue(encryptedPassword);
+
                                         signupDialog.dismiss();
                                         dialog.show();
                                         Window window = dialog.getWindow();
                                         window.setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
+
                                         Toast.makeText(getApplicationContext(),"sign up complete!",Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                    Toast.makeText(getApplicationContext(),"something went wrong. Please try again!",Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -202,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        //go back to main activity without login or signup
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
