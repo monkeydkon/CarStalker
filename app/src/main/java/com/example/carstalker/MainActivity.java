@@ -3,6 +3,7 @@ package com.example.carstalker;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,7 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,10 +37,16 @@ public class MainActivity extends AppCompatActivity {
     TextView welcomeTextView, welcomeTextView2;
     ImageView arrowImageView;
 
+    private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+     //   FirebaseApp.initializeApp(this);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -109,20 +121,27 @@ public class MainActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //close previous dialog
                 dialog.dismiss();
+
+                //make a new dialog
                 final Dialog signupDialog = new Dialog(MainActivity.this);
                 signupDialog.setContentView(R.layout.user_sign_up);
                 signupDialog.setTitle("sign up");
                 signupDialog.setCancelable(false);
+
+                //initialize
                 final EditText signupUsernameEditText = signupDialog.findViewById(R.id.signupUsernameEditText);
                 final EditText signupFirstnameEditText = signupDialog.findViewById(R.id.signupFirstnameEditText);
                 final EditText signupLastnameEditText = signupDialog.findViewById(R.id.signupLastnameEditText);
                 final EditText signupEmailEditText = signupDialog.findViewById(R.id.signupEmailEditText);
                 final EditText signupPasswordEditText = signupDialog.findViewById(R.id.signupPasswordEditText);
                 final EditText signupConfrimPasswordEditText = signupDialog.findViewById(R.id.signupConfirmPasswordEditText);
+
                 final Button signupRegisterButton = signupDialog.findViewById(R.id.signupRegisterButton);
                 final ImageView signupBackImageView = signupDialog.findViewById(R.id.signupBackImageView);
 
+                //go to signup dialog
                 signupBackImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -133,13 +152,44 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+                //sign up button
                 signupRegisterButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //check edittexts
                         if (signupUsernameEditText.getText().toString().equals("") || signupFirstnameEditText.getText().toString().equals("") ||
                                 signupLastnameEditText.getText().toString().equals("") || signupEmailEditText.getText().toString().equals("") ||
                                 signupPasswordEditText.getText().toString().equals("") || signupConfrimPasswordEditText.getText().toString().equals("")){
                             Toast.makeText(getApplicationContext(),"You left at least one field empty",Toast.LENGTH_SHORT).show();
+                        }else if(!signupPasswordEditText.getText().toString().equals(signupConfrimPasswordEditText.getText().toString())){
+                            Toast.makeText(getApplicationContext(),"Your passwords don't match. Try again.",Toast.LENGTH_SHORT).show();
+                            signupConfrimPasswordEditText.setText("");
+                            signupPasswordEditText.setText("");
+                        }else{
+                            mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.exists()){
+                                        Toast.makeText(getApplicationContext(),"This username is already taken. Try another one",Toast.LENGTH_SHORT).show();
+                                        signupUsernameEditText.setText("");
+                                    }else{
+                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("firstname").setValue(signupFirstnameEditText.getText().toString());
+                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("lastname").setValue(signupLastnameEditText.getText().toString());
+                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("email").setValue(signupEmailEditText.getText().toString());
+                                        mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("password").setValue(signupPasswordEditText.getText().toString());
+                                        signupDialog.dismiss();
+                                        dialog.show();
+                                        Window window = dialog.getWindow();
+                                        window.setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
+                                        Toast.makeText(getApplicationContext(),"sign up complete!",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     }
                 });
