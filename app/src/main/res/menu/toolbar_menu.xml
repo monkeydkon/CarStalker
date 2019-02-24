@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.carstalker.MainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <!-- "Mark Favorite", should appear as action button if possible -->
+        <item
+            android:id="@+id/email_in_button"
+            android:icon="@drawable/index"
+            android:title=" "
+            app:showAsAction="ifRoom"/>
+
+
+</menu>
+
+

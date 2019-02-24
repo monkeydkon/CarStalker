@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "736815863970",
+    "firebase_url": "https://car-stalker-a7d84.firebaseio.com",
+    "project_id": "car-stalker-a7d84",
+    "storage_bucket": "car-stalker-a7d84.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736815863970:android:588ca89c5c26ac97",
+        "android_client_info": {
+          "package_name": "com.example.carstalker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736815863970-gqs5gju4ldfndpae3tubad8dbgs9v1si.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carstalker",
+            "certificate_hash": "81406b984e9a31038e1c499270c4236b4e9f0d9e"
+          }
+        },
+        {
+          "client_id": "736815863970-aojavslb2s5vbqq5k43gu0k6ja9kiprb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMq8cP3VAkHcco-TUB1rlWLYsDqHy_eSk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736815863970-aojavslb2s5vbqq5k43gu0k6ja9kiprb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
