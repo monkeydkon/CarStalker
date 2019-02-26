@@ -2,7 +2,9 @@ package com.example.carstalker;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
+import android.se.omapi.Session;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -42,10 +44,32 @@ public class MainActivity extends AppCompatActivity {
     private String encryptedPassword;
     private String decryptedPassword;
 
+    private SaveSharedPreferences saveSharedPreferences;
+
+    public String logedUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        saveSharedPreferences = new SaveSharedPreferences(getApplicationContext());
+
+        logedUser = saveSharedPreferences.getusename();
+
+        // check if user has allready logged in
+        if(!logedUser.equals("")) {
+            Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
+            intent.putExtra("username", logedUser);
+            startActivity(intent);
+            return;
+        }
+//        }else{
+//          //  toolbar.setVisibility(View.VISIBLE);
+//        }
+
         setContentView(R.layout.activity_main);
+
+
 
      //   FirebaseApp.initializeApp(this);
 
@@ -55,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         // toolbar.setNavigationIcon(R.drawable.back);
         // toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setVisibility(View.VISIBLE);
         toolbar.setTitle("Car Stalker");
         toolbar.setSubtitle("Keeping you safe");
 
@@ -135,11 +160,27 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 if(passwordEditText.getText().toString().equals(decryptedPassword)){
                                     Toast.makeText(getApplicationContext(),"Login successfull",Toast.LENGTH_SHORT).show();
-                                    // TODO: 24/2/2019 WHAT TO DO AFTER USED IS LOGGED IN
+
+                                    //save to shared preferances for REMEMBER ME FUNCTIONALITY
+                                   // SaveSharedPreferences saveSharedPreferences = SaveSharedPreferences.getSharedPreferances();
+                                    // TODO: 25/2/2019 shared preferances keep logged user
+                                    saveSharedPreferences.setusename(usernameEditText.getText().toString().toLowerCase());
+
+
+
+                                    //succes->open new activity
+                                    Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
+                                    intent.putExtra("username", usernameEditText.getText().toString().toLowerCase());
+                                    startActivity(intent);
+                                    //kill this activity so user cant press back button
+                                    finish();
                                 }else{
                                     Toast.makeText(getApplicationContext(),"Wrong password",Toast.LENGTH_SHORT).show();
                                     passwordEditText.setText("");
                                 }
+                            }else{
+                                usernameEditText.setText("");
+                                Toast.makeText(getApplicationContext(),"This username does not exist",Toast.LENGTH_SHORT).show();
                             }
                         }
 
