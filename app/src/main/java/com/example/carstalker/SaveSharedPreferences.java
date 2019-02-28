@@ -22,12 +22,7 @@ public class SaveSharedPreferences {
 //        return getSharedPreferances(context).getString(PREF_USER_NAME, "");
 //    }
 //
-//    public static void clearUserName(Context context)
-//    {
-//        SharedPreferences.Editor editor = getSharedPreferances(context).edit();
-//        editor.clear(); //clear all stored data
-//        editor.commit();
-//    }
+
 
     private SharedPreferences prefs;
 
@@ -37,11 +32,16 @@ public class SaveSharedPreferences {
     }
 
     public void setusename(String usename) {
-        prefs.edit().putString("usename", usename).commit();
+        prefs.edit().putString("username", usename).commit();
     }
 
     public String getusename() {
-        String usename = prefs.getString("usename","");
+        String usename = prefs.getString("username","");
         return usename;
+    }
+
+    public void clearUserName()
+    {
+        prefs.edit().clear().commit();
     }
 }

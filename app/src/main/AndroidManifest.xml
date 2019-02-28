@@ -3,6 +3,8 @@
     package="com.example.carstalker">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <receiver android:name=".AlarmReceiver">
+        </receiver>
 
         <activity android:name=".LoggedInActivity"></activity>
         <activity android:name=".MainActivity">

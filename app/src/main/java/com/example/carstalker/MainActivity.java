@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity {
         // check if user has allready logged in
         if(!logedUser.equals("")) {
             Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
-            intent.putExtra("username", logedUser);
+            //intent.putExtra("username", logedUser);
             startActivity(intent);
+            finish();
             return;
         }
 //        }else{
@@ -170,7 +171,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     //succes->open new activity
                                     Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
-                                    intent.putExtra("username", usernameEditText.getText().toString().toLowerCase());
+                                   // intent.putExtra("username", saveSharedPreferences.getusename());
+                                 //   Toast.makeText(getApplicationContext(),usernameEditText.getText().toString().toLowerCase(), Toast.LENGTH_SHORT).show();
                                     startActivity(intent);
                                     //kill this activity so user cant press back button
                                     finish();
