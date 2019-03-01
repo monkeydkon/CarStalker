@@ -19,14 +19,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 
-public class LoggedInActivity extends AppCompatActivity {
+public class LoggedInActivity extends AppCompatActivity  {
 
     private final int intent_request_code = 0;
 
     String username;
 
-    int current_speed;
-    String longitude, latitude;
+    float current_speed;
+    double longitude, latitude;
 
     SaveSharedPreferences saveSharedPreferences;
 
@@ -87,14 +87,12 @@ public class LoggedInActivity extends AppCompatActivity {
 //        }
 
 
+        // set exact alarm(fires once) -> at AlarmReceiver I manually make it repeating
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intentForAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
-       // intentForAlarm.putExtra("username",logedUser);
-//        intentForAlarm.putExtra("current_speed", current_speed);
-//        intentForAlarm.putExtra("longitude",longitude);
-//        intentForAlarm.putExtra("latitude",latitude);
+
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),intent_request_code,intentForAlarm,0);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,SystemClock.elapsedRealtime(),1000, pendingIntent);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,SystemClock.elapsedRealtime(),pendingIntent);
 
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -111,5 +109,6 @@ public class LoggedInActivity extends AppCompatActivity {
 
 
     }
+
 
 }
