@@ -22,8 +22,6 @@ public class AlarmReceiver extends BroadcastReceiver{
 
     Context context;
 
-   // LocationGetter locationGetter = new LocationGetter();
-
     float speed;
     double longitude;
     double latitude = 1d;
@@ -40,35 +38,15 @@ public class AlarmReceiver extends BroadcastReceiver{
         // manual repeating alarm
        setRepeatingAlarm();
 
-
-
-//        FindMyLocation findMyLocation = new FindMyLocation();
-//
-//        speed = locationGetter.getSpeed();
-//        latitude = locationGetter.getLatitude();
-//        longitude = locationGetter.getLongitude();
-
-
-
-       // Toast.makeText(context,"gamhsia",Toast.LENGTH_SHORT).show();
-
         LocationGetter locationGetter = new LocationGetter();
-        locationGetter.getSpeed();
-        locationGetter.getLongitude();
-        locationGetter.getLatitude();
 
-        Log.d("hi","latitude: " + String.valueOf(latitude) + " longitude : " + String.valueOf(longitude));
-        Toast.makeText(context,"latitude: " + String.valueOf(latitude) + " longitude : " + String.valueOf(longitude),Toast.LENGTH_SHORT).show();
+        speed = locationGetter.getSpeed();
+        longitude = locationGetter.getLongitude();
+        latitude = locationGetter.getLatitude();
 
+        Log.d("hi","user: "+username+" latitude: " + String.valueOf(latitude) + " longitude : " + String.valueOf(longitude));
+        //Toast.makeText(context,"latitude: " + String.valueOf(latitude) + " longitude : " + String.valueOf(longitude),Toast.LENGTH_SHORT).show();
 
-//        int current_speed = Integer.parseInt(intent.getStringExtra("current_speed"));
-//        String longitude = intent.getStringExtra("longitude");
-//        String latitude = intent.getStringExtra("latitude");
-
-
-
-
-    //    Toast.makeText(context,username,Toast.LENGTH_SHORT).show();
     }
 
 

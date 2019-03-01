@@ -12,6 +12,7 @@ public class LocationGetter {//implements LocationListener {
     float speed;
     double longitude, latitude;
 
+
     public void setSpeed(float speed){
         this.speed = speed;
     }
@@ -25,15 +26,15 @@ public class LocationGetter {//implements LocationListener {
     }
 
     public float getSpeed(){
-        return  speed;
+        return  this.speed;
     }
 
     public double getLongitude(){
-        return latitude;
+        return this.latitude;
     }
 
     public double getLatitude(){
-        return latitude;
+        return this.latitude;
     }
 
 
