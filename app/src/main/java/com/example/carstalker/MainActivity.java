@@ -2,10 +2,13 @@ package com.example.carstalker;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.se.omapi.Session;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Here, thisActivity is the current activity
-       // ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        // ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -85,14 +88,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
         saveSharedPreferences = new SaveSharedPreferences(getApplicationContext());
 
         logedUser = saveSharedPreferences.getusename();
 
         // check if user has allready logged in
-        if(!logedUser.equals("")) {
+        if (!logedUser.equals("")) {
             Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
             //intent.putExtra("username", logedUser);
             startActivity(intent);
@@ -106,8 +107,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
-     //   FirebaseApp.initializeApp(this);
+        //   FirebaseApp.initializeApp(this);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -177,13 +177,13 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(usernameEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals("")){
-                    Toast.makeText(getApplicationContext(),"You left at least a field empty, try again",Toast.LENGTH_SHORT).show();
-                }else{
+                if (usernameEditText.getText().toString().equals("") || passwordEditText.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "You left at least a field empty, try again", Toast.LENGTH_SHORT).show();
+                } else {
                     mDatabase.child("users").child(usernameEditText.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
+                            if (dataSnapshot.exists()) {
 
                                 encryptedPassword = dataSnapshot.child("password").getValue().toString();
                                 AESCrypt aesCrypt = new AESCrypt();
@@ -191,33 +191,32 @@ public class MainActivity extends AppCompatActivity {
                                     decryptedPassword = aesCrypt.decrypt(encryptedPassword);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    Toast.makeText(getApplicationContext(),"something went wrong",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                if(passwordEditText.getText().toString().equals(decryptedPassword)){
-                                    Toast.makeText(getApplicationContext(),"Login successfull",Toast.LENGTH_SHORT).show();
+                                if (passwordEditText.getText().toString().equals(decryptedPassword)) {
+                                    Toast.makeText(getApplicationContext(), "Login successfull", Toast.LENGTH_SHORT).show();
 
                                     //save to shared preferances for REMEMBER ME FUNCTIONALITY
-                                   // SaveSharedPreferences saveSharedPreferences = SaveSharedPreferences.getSharedPreferances();
+                                    // SaveSharedPreferences saveSharedPreferences = SaveSharedPreferences.getSharedPreferances();
                                     // TODO: 25/2/2019 shared preferances keep logged user
                                     saveSharedPreferences.setusename(usernameEditText.getText().toString().toLowerCase());
 
 
-
                                     //succes->open new activity
                                     Intent intent = new Intent(MainActivity.this, LoggedInActivity.class);
-                                   // intent.putExtra("username", saveSharedPreferences.getusename());
-                                 //   Toast.makeText(getApplicationContext(),usernameEditText.getText().toString().toLowerCase(), Toast.LENGTH_SHORT).show();
+                                    // intent.putExtra("username", saveSharedPreferences.getusename());
+                                    //   Toast.makeText(getApplicationContext(),usernameEditText.getText().toString().toLowerCase(), Toast.LENGTH_SHORT).show();
                                     startActivity(intent);
                                     //kill this activity so user cant press back button
                                     finish();
-                                }else{
-                                    Toast.makeText(getApplicationContext(),"Wrong password",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_SHORT).show();
                                     passwordEditText.setText("");
                                 }
-                            }else{
+                            } else {
                                 usernameEditText.setText("");
-                                Toast.makeText(getApplicationContext(),"This username does not exist",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "This username does not exist", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -272,20 +271,20 @@ public class MainActivity extends AppCompatActivity {
                         //check edittexts
                         if (signupUsernameEditText.getText().toString().equals("") || signupFirstnameEditText.getText().toString().equals("") ||
                                 signupLastnameEditText.getText().toString().equals("") || signupEmailEditText.getText().toString().equals("") ||
-                                signupPasswordEditText.getText().toString().equals("") || signupConfrimPasswordEditText.getText().toString().equals("")){
-                            Toast.makeText(getApplicationContext(),"You left at least one field empty",Toast.LENGTH_SHORT).show();
-                        }else if(!signupPasswordEditText.getText().toString().equals(signupConfrimPasswordEditText.getText().toString())){
-                            Toast.makeText(getApplicationContext(),"Your passwords don't match. Try again.",Toast.LENGTH_SHORT).show();
+                                signupPasswordEditText.getText().toString().equals("") || signupConfrimPasswordEditText.getText().toString().equals("")) {
+                            Toast.makeText(getApplicationContext(), "You left at least one field empty", Toast.LENGTH_SHORT).show();
+                        } else if (!signupPasswordEditText.getText().toString().equals(signupConfrimPasswordEditText.getText().toString())) {
+                            Toast.makeText(getApplicationContext(), "Your passwords don't match. Try again.", Toast.LENGTH_SHORT).show();
                             signupConfrimPasswordEditText.setText("");
                             signupPasswordEditText.setText("");
-                        }else{
+                        } else {
                             mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.exists()){
-                                        Toast.makeText(getApplicationContext(),"This username is already taken. Try another one",Toast.LENGTH_SHORT).show();
+                                    if (dataSnapshot.exists()) {
+                                        Toast.makeText(getApplicationContext(), "This username is already taken. Try another one", Toast.LENGTH_SHORT).show();
                                         signupUsernameEditText.setText("");
-                                    }else{
+                                    } else {
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("firstname").setValue(signupFirstnameEditText.getText().toString());
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("lastname").setValue(signupLastnameEditText.getText().toString());
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("email").setValue(signupEmailEditText.getText().toString());
@@ -296,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                                             encryptedPassword = aesCrypt.encrypt(signupUsernameEditText.getText().toString().toLowerCase());
                                         } catch (Exception e) {
                                             e.printStackTrace();
-                                            Toast.makeText(getApplicationContext(),"something went wrong",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_SHORT).show();
                                             return;
                                         }
                                         mDatabase.child("users").child(signupUsernameEditText.getText().toString().toLowerCase()).child("password").setValue(encryptedPassword);
@@ -306,13 +305,13 @@ public class MainActivity extends AppCompatActivity {
                                         Window window = dialog.getWindow();
                                         window.setLayout(Toolbar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
 
-                                        Toast.makeText(getApplicationContext(),"sign up complete!",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "sign up complete!", Toast.LENGTH_SHORT).show();
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Toast.makeText(getApplicationContext(),"something went wrong. Please try again!",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "something went wrong. Please try again!", Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
@@ -342,7 +341,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -351,8 +349,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                   // findTheFuckingLocation();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -366,6 +363,8 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request.
         }
     }
+
+
 
 
 }

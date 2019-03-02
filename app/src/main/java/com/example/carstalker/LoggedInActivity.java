@@ -38,6 +38,8 @@ public class LoggedInActivity extends AppCompatActivity  {
         saveSharedPreferences = new SaveSharedPreferences(getApplicationContext());
         String loggedUser = saveSharedPreferences.getusename();
 
+        Toast.makeText(getApplicationContext(),"jo",Toast.LENGTH_SHORT).show();
+
         // set exact alarm(fires once) -> at AlarmReceiver I manually make it repeating
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intentForAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
