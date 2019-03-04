@@ -23,11 +23,6 @@ public class LoggedInActivity extends AppCompatActivity  {
 
     private final int intent_request_code = 0;
 
-    String username;
-
-    float current_speed;
-    double longitude, latitude;
-
     SaveSharedPreferences saveSharedPreferences;
 
     @Override
@@ -36,16 +31,19 @@ public class LoggedInActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_logged_in);
 
         saveSharedPreferences = new SaveSharedPreferences(getApplicationContext());
-        String loggedUser = saveSharedPreferences.getusename();
+      //  String loggedUser = saveSharedPreferences.getusename();
 
-        Toast.makeText(getApplicationContext(),"jo",Toast.LENGTH_SHORT).show();
-
-        // set exact alarm(fires once) -> at AlarmReceiver I manually make it repeating
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intentForAlarm = new Intent(getApplicationContext(), AlarmReceiver.class);
 
-        final PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(),intent_request_code,intentForAlarm,0);
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,SystemClock.elapsedRealtime(),pendingIntent);
+        Intent i=new Intent(this, AlarmReceiver.class);
+
+        final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, intent_request_code, i, 0);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime(),
+
+                pendingIntent);
+       // alarmManager.cancel(pendingIntent);
+
 
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -58,10 +56,5 @@ public class LoggedInActivity extends AppCompatActivity  {
                 finish();
             }
         });
-
-
-
     }
-
-
 }
