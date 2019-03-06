@@ -22,7 +22,14 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Stack;
 
 
@@ -41,6 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
     Stack<Location> locations = new Stack<>();
 
+    private DatabaseReference mDatabase;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -51,6 +59,8 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
         saveSharedPreferences = new SaveSharedPreferences(this.context);
         loggedUser = saveSharedPreferences.getusename();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -78,7 +88,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, intent_request_code, i, 0);
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 20000,
+                SystemClock.elapsedRealtime() + 2000,
 
                 pendingIntent);
     }
@@ -100,26 +110,44 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
                 mGoogleApiClient);
 
 
-        // TODO: 4/3/2019  
-//        locations.push(mLastLocation);
-//        
-//        Location first = locations.pop();
-//        
-//        if(!locations.empty()){
-//            Location second = locations.pop();
-//            
-//            String speed = String.valueOf(first)
-//        }
+        // TODO: 4/3/2019
+      //  locations.push()
         
         
 
-        float speed = mLastLocation.getSpeed();
+
+
        // mLastLocation = LocationServices.FusedLocationApi.removeLocationUpdates()
         if (mLastLocation != null) {
-            String latitude = (String.valueOf(mLastLocation.getLatitude()));
-            String longitude = (String.valueOf(mLastLocation.getLongitude()));
+            final String latitude = (String.valueOf(mLastLocation.getLatitude()));
+            final String longitude = (String.valueOf(mLastLocation.getLongitude()));
 
-            Toast.makeText(this.context,"usename :" +loggedUser+ " latitude : " + latitude + " longitude : " + longitude + " speed: " + String.valueOf(speed),Toast.LENGTH_SHORT).show();
+            final String altitude = (String.valueOf(mLastLocation.getAltitude()));
+
+            final String timestamp = String.valueOf(System.currentTimeMillis());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            final String dateString = simpleDateFormat.format(new Date(Long.parseLong(timestamp)));
+
+            final float speed = mLastLocation.getSpeed();
+
+            mDatabase.child("users").child(loggedUser).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("latitude").setValue(latitude);
+                    mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("longitude").setValue(longitude);
+                    mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("altitude").setValue(altitude);
+                    mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("speed").setValue(speed);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+
+            //Toast.makeText(this.context,"usename :" +loggedUser+ " latitude : " + latitude + " longitude : " + longitude + " speed: " + String.valueOf(speed),Toast.LENGTH_SHORT).show();
 
         }
     }
