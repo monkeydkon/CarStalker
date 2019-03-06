@@ -35,7 +35,7 @@ public class LoggedInActivity extends AppCompatActivity  {
 
         final AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        Intent i=new Intent(this, AlarmReceiver.class);
+        final Intent i=new Intent(this, AlarmReceiver.class);
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, intent_request_code, i, 0);
         alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
@@ -56,5 +56,17 @@ public class LoggedInActivity extends AppCompatActivity  {
                 finish();
             }
         });
+
+        Button showMaps = findViewById(R.id.showMaps);
+        showMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alarmManager.cancel(pendingIntent);
+                Intent intent = new Intent(LoggedInActivity.this, MapsActivity.class);
+                startActivity(intent);
+               // finish();
+            }
+        });
     }
+
 }

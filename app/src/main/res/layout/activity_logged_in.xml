@@ -16,4 +16,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/showMaps"
+        android:layout_width="87dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:text="Show maps"
+        app:layout_constraintEnd_toEndOf="@+id/logoutButton"
+        app:layout_constraintTop_toBottomOf="@+id/logoutButton" />
 </android.support.constraint.ConstraintLayout>
