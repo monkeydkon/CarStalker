@@ -37,8 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
     private final int intent_request_code = 0;
 
-
-    protected Context context;
+    Context context;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -53,10 +52,9 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
-
         this.context = context;
 
+        // take user session
         saveSharedPreferences = new SaveSharedPreferences(this.context);
         loggedUser = saveSharedPreferences.getusename();
 
@@ -73,13 +71,11 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
             mGoogleApiClient.connect();
         }
 
-
         setRepeatingAlarm();
-
-
     }
 
 
+    // exact repeating alarm
     private void setRepeatingAlarm() {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -87,10 +83,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
         Intent i = new Intent(context, AlarmReceiver.class);
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, intent_request_code, i, 0);
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + 2000,
-
-                pendingIntent);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5*60*1000, pendingIntent);
     }
 
     @Override
@@ -112,10 +105,6 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
         // TODO: 4/3/2019
       //  locations.push()
-        
-        
-
-
 
        // mLastLocation = LocationServices.FusedLocationApi.removeLocationUpdates()
         if (mLastLocation != null) {
@@ -144,11 +133,6 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 
                 }
             });
-
-
-
-            //Toast.makeText(this.context,"usename :" +loggedUser+ " latitude : " + latitude + " longitude : " + longitude + " speed: " + String.valueOf(speed),Toast.LENGTH_SHORT).show();
-
         }
     }
 

@@ -39,10 +39,6 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-//    Location location;
-//    private int speed;
-
-
     TextView welcomeTextView, welcomeTextView2;
     ImageView arrowImageView;
 

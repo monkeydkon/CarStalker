@@ -38,21 +38,26 @@ public class LoggedInActivity extends AppCompatActivity  {
         final Intent i=new Intent(this, AlarmReceiver.class);
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(this, intent_request_code, i, 0);
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-
-                pendingIntent);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pendingIntent);
        // alarmManager.cancel(pendingIntent);
 
 
+        // log out
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //stop alarm
                 alarmManager.cancel(pendingIntent);
+
+                //end session for logged user
                 saveSharedPreferences.setusename("");
+
+                //go to main activity
                 Intent exitIntent = new Intent(LoggedInActivity.this, MainActivity.class);
                 startActivity(exitIntent);
+
+                // stop this activity
                 finish();
             }
         });
@@ -61,7 +66,11 @@ public class LoggedInActivity extends AppCompatActivity  {
         showMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // stop alarm
                 alarmManager.cancel(pendingIntent);
+
+                //go to Maps activity
                 Intent intent = new Intent(LoggedInActivity.this, MapsActivity.class);
                 startActivity(intent);
                // finish();
