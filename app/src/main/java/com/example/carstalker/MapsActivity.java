@@ -23,6 +23,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -31,6 +37,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng userLocation;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
+
+    private DatabaseReference mDatabase;
+
+    private SaveSharedPreferences saveSharedPreferences;
+
+    private String logedUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +56,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        saveSharedPreferences = new SaveSharedPreferences(getApplicationContext());
+
+        logedUser = saveSharedPreferences.getusename();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     /**
@@ -83,6 +102,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     }
                 });
+
+        mDatabase.child("users").child(logedUser).child("events").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot i : dataSnapshot.getChildren()){
+                    double latitude = Double.parseDouble(i.child("latitude").getValue().toString());
+                    double longitude = Double.parseDouble(i.child("longitude").getValue().toString());
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title("You have been here"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -90,5 +126,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onBackPressed();
         Intent intent = new Intent(MapsActivity.this, LoggedInActivity.class);
         startActivity(intent);
+        finish();
     }
 }
