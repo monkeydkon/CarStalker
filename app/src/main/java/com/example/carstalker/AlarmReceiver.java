@@ -91,12 +91,12 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
         Intent i = new Intent(context, AlarmReceiver.class);
 
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, intent_request_code, i, 0);
-        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5 * 1000, pendingIntent);
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1 * 6 * 1000, pendingIntent);
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Location mLastLocation;
+        final Location mLastLocation;
         Double distance;
 
 
@@ -140,13 +140,13 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
         previousLocation = saveSharedPreferences.getLocation();
 
         if(previousLocation == null){
-            distance = 0.01d;
+            distance = 0.001d;
         }else{
             distance = distance(mLastLocation.getLatitude(),mLastLocation.getLongitude(),previousLocation.getLatitude(),previousLocation.getLongitude(), "K");
             Log.d("hi",previousLocation.toString());
             Log.d("hi",mLastLocation.toString());
             Log.d("hi",distance.toString());
-            Toast.makeText(context,String.valueOf(mLastLocation.getLongitude())+" "+String.valueOf(mLastLocation.getLatitude()),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,String.valueOf(mLastLocation.getLongitude())+" "+String.valueOf(mLastLocation.getLatitude()),Toast.LENGTH_SHORT).show();
         }
 
 
@@ -157,7 +157,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
 //
 //        Log.d("distamce",distance.toString());
 
-        if(distance >= 0.01d) {
+        if(distance >= 0.001d) {
 
 
             if (mLastLocation != null) {
@@ -170,7 +170,7 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 final String dateString = simpleDateFormat.format(new Date(Long.parseLong(timestamp)));
 
-                final float speed = mLastLocation.getSpeed();
+                final float speed = (float) (distance / 60 * 1000);
 
                 mDatabase.child("users").child(loggedUser).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -179,6 +179,8 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
                         mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("longitude").setValue(longitude);
                         mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("altitude").setValue(altitude);
                         mDatabase.child("users").child(loggedUser).child("events").child(dateString).child("speed").setValue(speed);
+
+
                     }
 
                     @Override
@@ -188,11 +190,13 @@ public class AlarmReceiver extends BroadcastReceiver implements GoogleApiClient.
                 });
 
             }
+
+            previousLocation = mLastLocation;
+            saveSharedPreferences.setLocation(previousLocation);
         }
 
 
-        previousLocation = mLastLocation;
-        saveSharedPreferences.setLocation(previousLocation);
+
 //        saveSharedPreferences.setCounter(1);
     }
 

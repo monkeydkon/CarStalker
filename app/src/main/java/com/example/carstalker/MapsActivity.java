@@ -103,14 +103,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
-        mDatabase.child("users").child(logedUser).child("events").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("users").child(logedUser).child("events").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot i : dataSnapshot.getChildren()){
-                    double latitude = Double.parseDouble(i.child("latitude").getValue().toString());
-                    double longitude = Double.parseDouble(i.child("longitude").getValue().toString());
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(latitude,longitude)).title("You have been here"));
+                if (dataSnapshot.exists()) {
+
+                    for (DataSnapshot i : dataSnapshot.getChildren()) {
+                        double latitude = Double.parseDouble(i.child("latitude").getValue().toString());
+                        double longitude = Double.parseDouble(i.child("longitude").getValue().toString());
+                        String speed = String.valueOf(i.child("speed").getValue()).substring(0, 4);
+                        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("speed: " + speed));
+                    }
+
                 }
+
             }
 
             @Override
